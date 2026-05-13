@@ -1,0 +1,15 @@
+[project]
+name = "niral-guard-camera"
+version = "0.1.0"
+description = "FastAPI camera backend with YOLOv8 Nano animal detection"
+requires-python = ">=3.10"
+dependencies = [
+  "fastapi==0.115.12",
+  "uvicorn[standard]==0.34.2",
+  "opencv-python-headless==4.11.0.86",
+  "numpy==2.2.5",
+  "ultralytics==8.3.140",
+]
+
+[tool.uv]
+dev-dependencies = []

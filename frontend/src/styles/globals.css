@@ -1,0 +1,25 @@
+html {
+	min-height: 100%;
+	background:
+		radial-gradient(circle at top left, rgba(34, 197, 94, 0.08), transparent 30%),
+		radial-gradient(circle at top right, rgba(45, 212, 191, 0.08), transparent 28%),
+		var(--background);
+}
+
+body {
+	min-height: 100%;
+	margin: 0;
+	color: var(--foreground);
+	background: transparent;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+	min-height: 100vh;
+}
+
+::selection {
+	background: rgba(45, 212, 191, 0.22);
+	color: var(--foreground);
+}

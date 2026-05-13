@@ -1,0 +1,1 @@
+"""FastAPI camera backend package."""

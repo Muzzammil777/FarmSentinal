@@ -3,6 +3,7 @@ const DEFAULT_SENSOR_BASE_URL = 'http://192.168.1.100';
 const DEFAULT_CAMERA_BASE_URL = 'http://127.0.0.1:8000';
 const LOCAL_CAMERA_FALLBACK_URL = 'http://127.0.0.1:8000';
 const DEFAULT_ALERT_THRESHOLD = 100;
+const DEFAULT_ESP32_CONTROL_URL = '';
 
 function safeParse(jsonText, fallback) {
   try {
@@ -51,6 +52,10 @@ export function getDashboardSettings() {
       Number(storedSettings.pollingInterval ?? import.meta.env.VITE_POLLING_INTERVAL ?? 1000),
     perimeterLabel: storedSettings.perimeterLabel || 'North boundary',
     esp32StreamUrl: String(storedSettings.esp32StreamUrl ?? import.meta.env.VITE_ESP32_STREAM_URL ?? 'http://10.120.58.104:81/stream').trim(),
+    esp32ControlUrl: normalizeBaseUrl(
+      storedSettings.esp32ControlUrl || import.meta.env.VITE_ESP32_CONTROL_URL,
+      DEFAULT_ESP32_CONTROL_URL,
+    ),
   };
 }
 
@@ -325,10 +330,11 @@ export async function getCameraSource() {
  * e.g. "http://192.168.1.105:81/stream" → "http://192.168.1.105:81"
  */
 export function getEsp32BaseUrl() {
-  const { esp32StreamUrl } = getDashboardSettings();
-  if (!esp32StreamUrl) return null;
+  const { esp32ControlUrl, esp32StreamUrl } = getDashboardSettings();
+  const candidate = esp32ControlUrl || esp32StreamUrl;
+  if (!candidate) return null;
   try {
-    const url = new URL(esp32StreamUrl);
+    const url = new URL(candidate);
     return `${url.protocol}//${url.host}`;
   } catch {
     return null;
@@ -402,5 +408,31 @@ export async function setDetectionEnabled(enabled) {
     online: Boolean(data.online ?? connected),
     cameraBaseUrl: baseUrl,
     connected,
+  };
+}
+
+export async function listEsp32Ports() {
+  const { data, connected, baseUrl } = await requestCameraJson('/esp32/ports');
+  return {
+    ...data,
+    connected,
+    cameraBaseUrl: baseUrl,
+  };
+}
+
+export async function flashEsp32Cam({ port, fqbn, streamUrl }) {
+  const { data, connected, baseUrl } = await requestCameraJson('/esp32/flash', {
+    method: 'POST',
+    body: {
+      port,
+      fqbn: fqbn || undefined,
+      stream_url: streamUrl || undefined,
+    },
+  });
+
+  return {
+    ...data,
+    connected,
+    cameraBaseUrl: baseUrl,
   };
 }

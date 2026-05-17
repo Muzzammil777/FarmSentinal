@@ -17,6 +17,8 @@ export function useSensorData(pollingInterval = 1000) {
   const mountedRef = useRef(true);
   const pollingTimerRef = useRef(null);
   const inFlightRequestRef = useRef(false);
+  // Prevents overwriting the frozen alert snapshot on subsequent polls while alert is still active
+  const alertFrozenRef = useRef(false);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -70,13 +72,18 @@ export function useSensorData(pollingInterval = 1000) {
         }
 
         if (snapshot.alert) {
-          if (snapshot.alertKey !== lastAlertKeyRef.current) {
+          // Only capture the alert snapshot ONCE — freeze it at the detection distance.
+          // Do NOT overwrite if an alert is already frozen (alertFrozenRef = true).
+          if (!alertFrozenRef.current) {
+            alertFrozenRef.current = true;
             lastAlertKeyRef.current = snapshot.alertKey;
             setActiveAlert(snapshot);
             setIsAlertOpen(true);
+            console.log('[sensor-hook] alert FROZEN at distance:', snapshot.distanceCm, 'cm');
           }
         } else {
           lastAlertKeyRef.current = '';
+          alertFrozenRef.current = false;
           setIsAlertOpen(false);
         }
       } else {
@@ -116,7 +123,9 @@ export function useSensorData(pollingInterval = 1000) {
     }
 
     await resetSensorAlert();
-    lastAlertKeyRef.current = activeAlert.alertKey;
+    // Unfreeze so the next detection creates a fresh alert snapshot
+    alertFrozenRef.current = false;
+    lastAlertKeyRef.current = '';
     setIsAlertOpen(false);
     setActiveAlert(null);
   }, [activeAlert]);

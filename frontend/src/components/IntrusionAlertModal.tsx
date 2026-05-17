@@ -51,7 +51,9 @@ export function IntrusionAlertModal({
                       <p className="text-xs font-semibold uppercase tracking-[0.28em] text-rose-100/90">Intrusion detected</p>
                       <h2 className="mt-2 text-2xl font-semibold tracking-tight">Perimeter breach reported</h2>
                       <p className="mt-2 max-w-md text-sm text-rose-50/90">
-                        The sensor threshold was crossed. Acknowledge the event to send a reset command to the ESP8266.
+                        {reading?.distanceCm != null
+                          ? `Object detected at ${reading.distanceCm} cm — within the 45 cm threshold. Acknowledge to reset the ESP8266.`
+                          : 'The sensor threshold was crossed. Acknowledge the event to send a reset command to the ESP8266.'}
                       </p>
                     </div>
                   </div>
@@ -67,9 +69,12 @@ export function IntrusionAlertModal({
               </div>
 
               <div className="grid gap-4 px-5 py-5 sm:grid-cols-3 sm:px-6">
-                <div className="rounded-2xl border border-border bg-muted/40 p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Distance</p>
-                  <p className="mt-2 text-3xl font-semibold tracking-tight text-foreground">{reading?.distanceCm ?? '—'} cm</p>
+                <div className="rounded-2xl border border-amber-400/40 bg-amber-500/10 p-4">
+                  <p className="text-xs font-medium uppercase tracking-wide text-amber-600 dark:text-amber-400">Detected at</p>
+                  <p className="mt-2 text-3xl font-semibold tracking-tight text-amber-700 dark:text-amber-300">
+                    {reading?.distanceCm != null ? `${reading.distanceCm} cm` : '—'}
+                  </p>
+                  <p className="mt-1 text-xs text-amber-600/80 dark:text-amber-400/80">Threshold: ≤ 45 cm</p>
                 </div>
                 <div className="rounded-2xl border border-border bg-muted/40 p-4">
                   <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Location</p>

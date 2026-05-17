@@ -5,18 +5,6 @@ import { AppImage } from '../components/AppImage';
 import { StatusBadge } from '../components/StatusBadge';
 import { getAnimalDetection, getCameraSource, getCameraStreamUrl, getDashboardSettings, setCameraSource, setEsp32Buzzer, setEsp32Flash, setDetectionEnabled as updateDetectionEnabled } from '../services/api';
 
-const ESP_IP = (() => {
-  const settings = getDashboardSettings();
-  const raw = settings.esp32StreamUrl?.trim() ?? '';
-  if (!raw) return '';
-  try {
-    const url = new URL(raw.includes('://') ? raw : `http://${raw}`);
-    return url.host;
-  } catch {
-    return raw.replace(/^https?:\/\//, '').split('/')[0] ?? '';
-  }
-})();
-
 function mergeChunks(chunks: Uint8Array[]): Uint8Array {
   const total = chunks.reduce((sum, c) => sum + c.length, 0);
   const merged = new Uint8Array(total);
@@ -114,6 +102,7 @@ export function Camera() {
   const overlayStreamRef = useRef<string>('');
   const freezeRef = useRef(false);
   const autoFlashRef = useRef(false);
+  const autoBuzzerRef = useRef(false);
   const pollInFlightRef = useRef(false);
   const { esp32StreamUrl } = getDashboardSettings();
   const resolvedEsp32StreamUrl = (() => {
@@ -230,25 +219,14 @@ export function Camera() {
     setError('');
     setFlashOn(on);
     flashOnRef.current = on;
-
     flashRequestRef.current?.abort();
     const controller = new AbortController();
     flashRequestRef.current = controller;
 
-    if (!ESP_IP) {
-      return;
-    }
-
-    const endpoint = on ? 'flash_on' : 'flash_off';
-    const url = `http://${ESP_IP}/${endpoint}`;
-    const timeoutId = setTimeout(() => controller.abort(), 800);
-
     try {
-      await fetch(url, { signal: controller.signal, cache: 'no-store' });
+      await setEsp32Flash(on);
     } catch {
-      // Ignore network aborts/timeouts; ESP32 likely received the command.
-    } finally {
-      clearTimeout(timeoutId);
+      // Ignore errors; alert outputs are also driven by the backend.
     }
   };
 
@@ -275,6 +253,12 @@ export function Camera() {
     if (autoFlashRef.current) {
       autoFlashRef.current = false;
       void sendFlashCommand(false);
+    }
+    if (autoBuzzerRef.current) {
+      autoBuzzerRef.current = false;
+      setBuzzerOn(false);
+      buzzerOnRef.current = false;
+      void setEsp32Buzzer(false);
     }
   };
 
@@ -347,12 +331,24 @@ export function Camera() {
         autoFlashRef.current = true;
         void sendFlashCommand(true);
       }
+      if (!buzzerOnRef.current) {
+        autoBuzzerRef.current = true;
+        setBuzzerOn(true);
+        buzzerOnRef.current = true;
+        void setEsp32Buzzer(true);
+      }
       return;
     }
 
     if (!freezeRef.current && autoFlashRef.current) {
       autoFlashRef.current = false;
       void sendFlashCommand(false);
+    }
+    if (!freezeRef.current && autoBuzzerRef.current) {
+      autoBuzzerRef.current = false;
+      setBuzzerOn(false);
+      buzzerOnRef.current = false;
+      void setEsp32Buzzer(false);
     }
   }, [detectionState, detection?.latestDetection, detection?.detections, detection?.species]);
 
@@ -378,10 +374,7 @@ export function Camera() {
       }
 
 
-      const shouldUseOverlay = detectionEnabledRef.current && Boolean(overlayStreamRef.current);
-      const streamUrl = shouldUseOverlay
-        ? overlayStreamRef.current
-        : (ESP_IP ? `http://${ESP_IP}/stream` : '');
+      const streamUrl = overlayStreamRef.current || getCameraStreamUrl();
 
       if (!streamUrl) {
         timerRef.current = setTimeout(poll, 2000);

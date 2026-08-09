@@ -2,9 +2,9 @@
   "esp8266_ip": "10.82.146.10",
   "camera_ip": "10.82.146.44",
   "polling_interval_ms": 500,
-  "selected_animal": "bear",
+  "selected_animal": "cow",
   "auto_mode": true,
   "confidence_threshold": 0.7,
-  "camera_source": "esp",
+  "camera_source": "demo",
   "simulation_mode": true
 }

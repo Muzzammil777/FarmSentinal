@@ -48,7 +48,7 @@ class CameraManager:
 
             if desired_source == "webcam":
                 if cap is None or not cap.isOpened():
-                    if self._webcam_retry_count < 2:
+                    if self._webcam_retry_count < 1:
                         logger.info("Attempting connection to local webcam...")
                         cap = cv2.VideoCapture(0)
                         self._webcam_retry_count += 1
@@ -64,8 +64,10 @@ class CameraManager:
                         if cap:
                             cap.release()
                             cap = None
+                        demo_frame = self._generate_demo_frame()
+                        with self.lock:
+                            self.latest_frame = demo_frame
                 else:
-                    # Fallback to simulated farm stream if webcam unavailable (e.g. cloud host)
                     demo_frame = self._generate_demo_frame()
                     with self.lock:
                         self.latest_frame = demo_frame
@@ -93,7 +95,6 @@ class CameraManager:
                     else:
                         raise ValueError("Could not open ESP stream")
                 except Exception:
-                    # Fallback to simulated farm stream if physical ESP32 is offline/unreachable
                     demo_frame = self._generate_demo_frame()
                     with self.lock:
                         self.latest_frame = demo_frame
@@ -155,7 +156,7 @@ class CameraManager:
         cv2.line(img, (0, 250), (640, 250), (45, 70, 120), 4)
         cv2.line(img, (0, 280), (640, 280), (45, 70, 120), 4)
 
-        # Animated Simulated Intruder (Cow / Dog walking across farm field)
+        # Animated Simulated Intruder (Cow / Bear / Dog walking across farm field)
         pos_x = int((math.sin(self._demo_tick * 0.5) + 1.0) * 220 + 80)
         pos_y = 310
 
@@ -175,14 +176,15 @@ class CameraManager:
         cv2.rectangle(img, (pos_x + 95, pos_y + 70), (pos_x + 105, pos_y + 110 - leg_offset), (200, 200, 200), -1)
 
         # Label graphic overlay
-        cv2.putText(img, "SIMULATED FARM FIELD DEMO STREAM", (15, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+        cv2.putText(img, "SIMULATED FARM FIELD STREAM", (15, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
 
         return img
 
-    def get_latest_frame(self) -> Optional[np.ndarray]:
+    def get_latest_frame(self) -> np.ndarray:
         with self.lock:
             if self.latest_frame is not None:
                 return self.latest_frame.copy()
-            return None
+        # Always return a valid frame so stream & detector thread never freeze
+        return self._generate_demo_frame()
 
 camera_manager = CameraManager()

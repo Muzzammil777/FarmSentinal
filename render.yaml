@@ -1,5 +1,5 @@
 services:
-  # Static Site Deployment for Frontend
+  # Static Site Deployment for React Frontend Dashboard
   - type: static
     name: farmsentinal-dashboard
     repo: https://github.com/Muzzammil777/FarmSentinal
@@ -7,12 +7,15 @@ services:
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://farmsentinal-backend.onrender.com/api
     routes:
       - type: rewrite
         source: /*
         destination: /index.html
 
-  # Web Service Deployment for Python FastAPI Backend
+  # Web Service Deployment for Python FastAPI Backend Bridge
   - type: web
     name: farmsentinal-backend
     env: python

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Camera, Maximize2, RefreshCw, Video, AlertCircle, Eye } from 'lucide-react';
 import { AppSettings } from '../types';
+import { API_BASE } from '../services/api';
 
 interface CameraCardProps {
   settings?: AppSettings;
@@ -80,7 +81,7 @@ export const CameraCard: React.FC<CameraCardProps> = ({ settings }) => {
         {!hasError ? (
           <img
             key={key}
-            src="/api/video"
+            src={`${API_BASE}/video?stream_key=${key}`}
             alt="FarmSentinal Live Video Feed"
             onError={() => setHasError(true)}
             className="w-full h-full object-cover"

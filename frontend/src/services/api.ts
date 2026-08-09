@@ -1,6 +1,7 @@
 import type { SensorStatus, DetectionStatus, HardwareControlStatus, AppSettings, LogEntry } from '../types';
 
-const API_BASE = '/api';
+export const API_BASE = (import.meta.env.VITE_API_BASE_URL as string) || 
+  (import.meta.env.PROD ? 'https://farmsentinal-backend.onrender.com/api' : '/api');
 
 export async function fetchSensorStatus(): Promise<SensorStatus> {
   const res = await fetch(`${API_BASE}/sensors`);

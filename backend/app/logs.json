@@ -1,0 +1,233 @@
+[
+  {
+    "id": "b0867e2f",
+    "timestamp": "2026-08-05 16:27:42",
+    "animal": "elephant",
+    "confidence": 0.86,
+    "distance": 43.0,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "e40211b9",
+    "timestamp": "2026-08-05 16:27:36",
+    "animal": "elephant",
+    "confidence": 0.73,
+    "distance": 43.0,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "c5cc58d1",
+    "timestamp": "2026-08-05 16:27:33",
+    "animal": "elephant",
+    "confidence": 0.74,
+    "distance": 43.0,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "bf2f1f57",
+    "timestamp": "2026-08-05 16:27:30",
+    "animal": "elephant",
+    "confidence": 0.83,
+    "distance": 43.0,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "3544de7a",
+    "timestamp": "2026-08-05 16:27:26",
+    "animal": "elephant",
+    "confidence": 0.79,
+    "distance": 43.0,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "6a5d9f34",
+    "timestamp": "2026-08-05 16:27:22",
+    "animal": "elephant",
+    "confidence": 0.66,
+    "distance": 43.0,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "afbcfe20",
+    "timestamp": "2026-08-05 13:42:24",
+    "animal": "elephant",
+    "confidence": 0.72,
+    "distance": 10.1,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "ebf81f3b",
+    "timestamp": "2026-08-05 13:42:20",
+    "animal": "elephant",
+    "confidence": 0.78,
+    "distance": 20.4,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "2d5527a5",
+    "timestamp": "2026-08-05 13:42:17",
+    "animal": "elephant",
+    "confidence": 0.77,
+    "distance": 37.0,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "a07b299c",
+    "timestamp": "2026-08-05 13:42:11",
+    "animal": "elephant",
+    "confidence": 0.78,
+    "distance": 75.2,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "e1ae1ea4",
+    "timestamp": "2026-08-05 13:25:54",
+    "animal": "bear",
+    "confidence": 0.87,
+    "distance": 78.1,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "87d3d2b4",
+    "timestamp": "2026-08-05 13:25:51",
+    "animal": "bear",
+    "confidence": 0.74,
+    "distance": 58.8,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "57c59b83",
+    "timestamp": "2026-08-05 13:25:48",
+    "animal": "bear",
+    "confidence": 0.79,
+    "distance": 39.1,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "42282fb9",
+    "timestamp": "2026-08-05 13:25:36",
+    "animal": "bear",
+    "confidence": 0.78,
+    "distance": 20.8,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "ab860059",
+    "timestamp": "2026-08-05 13:25:32",
+    "animal": "bear",
+    "confidence": 0.82,
+    "distance": 49.2,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "9113a1bb",
+    "timestamp": "2026-08-05 13:25:28",
+    "animal": "bear",
+    "confidence": 0.84,
+    "distance": 74.0,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "625b2f13",
+    "timestamp": "2026-08-05 13:25:24",
+    "animal": "bear",
+    "confidence": 0.8,
+    "distance": 80.6,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "28353f2b",
+    "timestamp": "2026-08-05 13:25:21",
+    "animal": "bear",
+    "confidence": 0.9,
+    "distance": 69.8,
+    "alert": true,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "fea4e46a",
+    "timestamp": "2026-08-03 17:48:56",
+    "animal": "elephant",
+    "confidence": 0.79,
+    "distance": 35.0,
+    "alert": false,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "1487821e",
+    "timestamp": "2026-08-03 17:48:38",
+    "animal": "elephant",
+    "confidence": 0.73,
+    "distance": 35.0,
+    "alert": false,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  },
+  {
+    "id": "b61f4190",
+    "timestamp": "2026-08-03 17:48:28",
+    "animal": "elephant",
+    "confidence": 0.87,
+    "distance": 35.0,
+    "alert": false,
+    "led_state": true,
+    "buzzer_state": true,
+    "action_taken": "AUTOMATIC LED & BUZZER ACTIVATED"
+  }
+]

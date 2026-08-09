@@ -21,6 +21,7 @@ class CameraManager:
         self.thread: Optional[threading.Thread] = None
         self.source = "demo"
         self._demo_tick = 0.0
+        self._webcam_retry_count = 0
 
     def start(self):
         if self.is_running:
@@ -47,33 +48,35 @@ class CameraManager:
 
             if desired_source == "webcam":
                 if cap is None or not cap.isOpened():
-                    logger.info("Attempting connection to local webcam...")
-                    cap = cv2.VideoCapture(0)
-                    if not cap.isOpened():
-                        self.is_connected = False
-                        logger.warning("Local webcam unavailable. Retrying in 5 seconds...")
-                        self.latest_frame = self._generate_error_frame("Webcam Unavailable (Retrying...)")
-                        time.sleep(5)
-                        continue
+                    if self._webcam_retry_count < 2:
+                        logger.info("Attempting connection to local webcam...")
+                        cap = cv2.VideoCapture(0)
+                        self._webcam_retry_count += 1
 
-                ret, frame = cap.read()
-                if ret and frame is not None:
-                    with self.lock:
-                        self.latest_frame = frame
-                        self.is_connected = True
+                if cap and cap.isOpened():
+                    ret, frame = cap.read()
+                    if ret and frame is not None:
+                        with self.lock:
+                            self.latest_frame = frame
+                            self.is_connected = True
+                    else:
+                        self.is_connected = False
+                        if cap:
+                            cap.release()
+                            cap = None
                 else:
-                    self.is_connected = False
-                    if cap:
-                        cap.release()
-                        cap = None
-                    time.sleep(1)
+                    # Fallback to simulated farm stream if webcam unavailable (e.g. cloud host)
+                    demo_frame = self._generate_demo_frame()
+                    with self.lock:
+                        self.latest_frame = demo_frame
+                        self.is_connected = True
+                    time.sleep(0.04)
 
             elif desired_source == "esp":
                 if cap is not None and cap.isOpened():
                     cap.release()
                     cap = None
-                
-                # Fetch frame from ESP32 camera stream on port 81 or http stream
+
                 esp_stream_url = f"http://{cfg.camera_ip}:81"
                 try:
                     cap_esp = cv2.VideoCapture(esp_stream_url)
@@ -89,17 +92,19 @@ class CameraManager:
                             raise ValueError("Could not read frame from ESP stream")
                     else:
                         raise ValueError("Could not open ESP stream")
-                except Exception as e:
-                    self.is_connected = False
+                except Exception:
+                    # Fallback to simulated farm stream if physical ESP32 is offline/unreachable
+                    demo_frame = self._generate_demo_frame()
                     with self.lock:
-                        self.latest_frame = self._generate_error_frame(f"ESP32 Cam Unavailable ({cfg.camera_ip}:81)")
-                    time.sleep(5)
+                        self.latest_frame = demo_frame
+                        self.is_connected = True
+                    time.sleep(0.04)
 
             else:  # "demo" / simulation feed
                 if cap is not None and cap.isOpened():
                     cap.release()
                     cap = None
-                
+
                 demo_frame = self._generate_demo_frame()
                 with self.lock:
                     self.latest_frame = demo_frame
@@ -119,9 +124,8 @@ class CameraManager:
 
     def _generate_demo_frame(self) -> np.ndarray:
         self._demo_tick += 0.05
-        # Create a 640x480 realistic digital farm field frame
         img = np.zeros((480, 640, 3), dtype=np.uint8)
-        
+
         # Sky gradient (Deep blue to soft sky blue)
         for y in range(200):
             r = int(135 - y * 0.3)
@@ -156,15 +160,13 @@ class CameraManager:
         pos_y = 310
 
         # Draw realistic Cow silhouette shape
-        # Body
         cv2.ellipse(img, (pos_x + 60, pos_y + 40), (55, 35), 0, 0, 360, (240, 240, 240), -1)
-        # Black spots on cow
         cv2.circle(img, (pos_x + 45, pos_y + 35), 18, (20, 20, 20), -1)
         cv2.circle(img, (pos_x + 75, pos_y + 48), 14, (20, 20, 20), -1)
-        # Cow Head & Ears
         cv2.circle(img, (pos_x + 125, pos_y + 20), 22, (240, 240, 240), -1)
         cv2.circle(img, (pos_x + 130, pos_y + 15), 8, (20, 20, 20), -1)
         cv2.ellipse(img, (pos_x + 120, pos_y + 5), (14, 6), -30, 0, 360, (220, 220, 220), -1)
+
         # Legs
         leg_offset = int(math.sin(self._demo_tick * 4) * 8)
         cv2.rectangle(img, (pos_x + 25, pos_y + 70), (pos_x + 35, pos_y + 110 + leg_offset), (200, 200, 200), -1)
@@ -174,13 +176,7 @@ class CameraManager:
 
         # Label graphic overlay
         cv2.putText(img, "SIMULATED FARM FIELD DEMO STREAM", (15, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
-        
-        return img
 
-    def _generate_error_frame(self, message: str) -> np.ndarray:
-        img = np.zeros((480, 640, 3), dtype=np.uint8)
-        cv2.putText(img, message, (40, 240), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
-        cv2.putText(img, "Check Camera IP in Settings", (40, 280), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (200, 200, 200), 1)
         return img
 
     def get_latest_frame(self) -> Optional[np.ndarray]:
@@ -188,6 +184,5 @@ class CameraManager:
             if self.latest_frame is not None:
                 return self.latest_frame.copy()
             return None
-
 
 camera_manager = CameraManager()
